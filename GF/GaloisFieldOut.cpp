@@ -172,8 +172,27 @@ int main(int argc, char *argv[])
 	cv::Mat3b pattern;
 	createPattern(arr, pattern);
 	cv::imshow("pattern", pattern);
-
+	cv::imwrite("pattern.tiff", pattern);
 	cv::waitKey();
+
+	//Create code matrix;
+	cv::Mat_<cv::Vec4i> codeMat(62,64);
+	
+
+	for (int i = 0; i < codeMat.rows; ++i) {
+		for (int j = 0; j < codeMat.cols; ++j) {
+			cv::Vec4i code;
+			code[0] = arr(i, j);
+			code[1] = arr(i, j + 1);
+			code[2] = arr(i + 1, j);
+			code[3] = arr(i + 1, j + 1);
+			codeMat(i, j) = code;
+		}
+	}
+	cv::FileStorage file("CodeFile.xml", cv::FileStorage::WRITE);
+
+	// Write to file!
+	file << "codeMat" << codeMat;
 	exit(EXIT_SUCCESS);
 	return true;
 
