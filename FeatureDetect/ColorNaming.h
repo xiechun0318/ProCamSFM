@@ -9,39 +9,57 @@ enum ColorNamingSpace
 	HSV,
 	LAB
 };
-int decideColor(Scalar & color, ColorNamingSpace colorSpace = LAB) {
-	
-	//Mat bgr(1, 1, CV_32FC3, color / 255.f);
-	Mat bgr(1, 1, CV_8UC3, color);
+int decideColor(Scalar & color, ColorNamingSpace colorSpace = HSV) {
+
 	if (colorSpace == LAB) {
-		Vec3f bgr(color[0], color[1], color[2]);
-		Vec3f lab;
+		Mat bgr(1, 1, CV_8UC3, color);
+		//Vec3b bgr(color[0], color[1], color[2]);
+		Mat3b lab;
 		cvtColor(bgr, lab, COLOR_BGR2Lab);
-		Vec3f r(0, 0, 255),
-			g(0, 255, 0),
-			b(255, 0, 0);
-		Vec3f r_lab, g_lab, b_lab;
+		Mat3b r(Vec3b(0, 0, 255)),
+			g(Vec3b(0, 255, 0)),
+			b(Vec3b(255, 0, 0)),
+			k(Vec3b(0, 0, 0));
+
+		Mat3b r_lab, g_lab, b_lab, k_lab;
 		
 		cvtColor(r, r_lab, COLOR_BGR2Lab);
 		cvtColor(g, g_lab, COLOR_BGR2Lab);
 		cvtColor(b, b_lab, COLOR_BGR2Lab);
-		float d_r = (r_lab - lab).dot(r_lab - lab);
-		float d_g = (g_lab - lab).dot(g_lab - lab);
-		float d_b = (b_lab - lab).dot(b_lab - lab);
+		cvtColor(k, k_lab, COLOR_BGR2Lab);
+		int d_r = (r_lab - lab).dot(r_lab - lab);
+		int d_g = (g_lab - lab).dot(g_lab - lab);
+		int d_b = (b_lab - lab).dot(b_lab - lab);
+		int d_k = (k_lab - lab).dot(k_lab - lab);
+		int d_min = min(d_r, min(d_g, min(d_b, d_k)));
+		if (d_min == d_r) {
+			return 0;
+		}
+		else if (d_min == d_g) {
+			return 1;
+		}
+		else if (d_min == d_b) {
+			return 2;
+		}
+		else if (d_min == d_k) {
+			return 3;
+		}
+		else return -1;
 
 	}
 	if (colorSpace == HSV) {
+		Mat bgr(1, 1, CV_32FC3, color / 255.f);
 		Mat hsv;
 		cvtColor(bgr, hsv, COLOR_BGR2HSV);
 		float h = hsv.at<Vec3f>(0, 0)[0];
 		float s = hsv.at<Vec3f>(0, 0)[1];
 		float v = hsv.at<Vec3f>(0, 0)[2];
-		if (v < 0.6) { //black
+		if (v < 0.5) { //black
 			return 3;
 		}
-		//else if ( s < 0.20) { //black??
-			//return 3;
-		//}
+		else if ( s < 0.20) { //black??
+			return 3;
+		}
 		else if (h < 60 || h >= 300) {//red
 			return 0;
 		}
