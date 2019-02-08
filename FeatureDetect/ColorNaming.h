@@ -55,11 +55,11 @@ int decideColor(Scalar & color, ColorNamingSpace colorSpace = HSV) {
 		float s = hsv.at<Vec3f>(0, 0)[1];
 		float v = hsv.at<Vec3f>(0, 0)[2];
 		if (v < 0.5) { //black
-			return 3;
+			return 2;
 		}
-		else if ( s < 0.20) { //black??
-			return 3;
-		}
+		//else if ( s < 0.20) { //black??
+			//return 3;
+		//}
 		else if (h < 60 || h >= 300) {//red
 			return 0;
 		}
@@ -67,7 +67,7 @@ int decideColor(Scalar & color, ColorNamingSpace colorSpace = HSV) {
 			return 1;
 		}
 		else if (h >= 180 && h < 300) {//blue
-			return 2;
+			return 3;
 		}
 		else {
 			std::cout << " color detect failed " << std::endl;

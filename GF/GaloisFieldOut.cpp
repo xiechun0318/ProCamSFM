@@ -39,6 +39,8 @@ unsigned int poly[4] = { 1,1,0,1 };
   A Galois Field of type GF(2^8)
 */
 
+int elmSize = 11;
+
 galois::GaloisField gf(3, poly);
 
 bool checkWindowProperty(cv::Mat arr) {
@@ -73,7 +75,7 @@ bool checkWindowProperty(cv::Mat arr) {
 	return res;
 }
 void createPattern(const cv::Mat1i& labels, cv::Mat& img) {
-	int elmSize = 11;
+	
 	img = cv::Mat3b(labels.size()*11,cv::Vec3b(255,255,255));
 	for (int i = 0; i < labels.rows; i++) {
 		for (int j = 0; j < labels.cols; j++) {
@@ -189,10 +191,13 @@ int main(int argc, char *argv[])
 			codeMat(i, j) = code;
 		}
 	}
+	
+	
 	cv::FileStorage file("CodeFile.xml", cv::FileStorage::WRITE);
 
 	// Write to file!
 	file << "codeMat" << codeMat;
+	file.release();
 	exit(EXIT_SUCCESS);
 	return true;
 
