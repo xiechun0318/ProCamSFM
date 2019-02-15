@@ -87,9 +87,9 @@ void createPattern(const cv::Mat1i& labels, cv::Mat& img) {
 				color = cv::Scalar(0, 0, 255);
 			else if (colorLabel == 1)//G
 				color = cv::Scalar(0, 255, 0);
-			else if (colorLabel == 3)//B
+			else if (colorLabel == 2)//B
 				color = cv::Scalar(255, 0, 0);
-			else if (colorLabel == 4)//K
+			else if (colorLabel == 3)//K
 				color = cv::Scalar(0, 0, 0);
 
 			//draw solid
