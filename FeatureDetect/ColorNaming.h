@@ -7,7 +7,8 @@ using namespace cv;
 enum ColorNamingSpace
 {
 	HSV,
-	LAB
+	LAB,
+	HSV_ALT
 };
 int decideColor(Scalar & color, ColorNamingSpace colorSpace = HSV) {
 
@@ -54,11 +55,11 @@ int decideColor(Scalar & color, ColorNamingSpace colorSpace = HSV) {
 		float h = hsv.at<Vec3f>(0, 0)[0];
 		float s = hsv.at<Vec3f>(0, 0)[1];
 		float v = hsv.at<Vec3f>(0, 0)[2];
-		if (v < 0.5) { //black
+		if (v < 0.6) { //black
 			return 3;
 		}
-		else if ( s < 0.20) { //black??
-			return 4;
+		else if ( s < 0.05) { //black??
+			return 3;
 		}
 		else if (h < 60 || h >= 300) {//red
 			return 0;
@@ -74,48 +75,49 @@ int decideColor(Scalar & color, ColorNamingSpace colorSpace = HSV) {
 			return -1;
 		}
 	}
-	/*
-	float b = color[0], g = color[1], r = color[2];
+	if (colorSpace == HSV_ALT) {
 
-	float s = sqrt(1 - (r*g+g*b+r*b)/(r*r+g*g+b*b));
+		float b = color[0], g = color[1], r = color[2];
 
-	float hr, hg, hb;
-	float temp;
-	//hr
-	temp = (r - g)*(r - g) + (r - b)*(g - b);
-	if (temp <= 0)
-		hr = 0;
-	else
-		hr = (2 * r - g - b) / (2 * sqrt(temp));
+		float s = sqrt(1 - (r*g + g * b + r * b) / (r*r + g * g + b * b));
 
-	//hg
-	temp = (g - r)*(g - r) + (g - b)*(r - b);
-	if (temp <= 0)
-		hg = 0;
-	else
-		hg = (2 * g - r - b) / (2 * sqrt(temp));
+		float hr, hg, hb;
+		float temp;
+		//hr
+		temp = (r - g)*(r - g) + (r - b)*(g - b);
+		if (temp <= 0)
+			hr = 0;
+		else
+			hr = (2 * r - g - b) / (2 * sqrt(temp));
 
-	//hb
-	temp = (b - g)*(b - g) + (b - r)*(g - r);
-	if (temp <= 0)
-		hb = 0;
-	else
-		hb = (2 * b - g - r) / (2 * sqrt(temp));
+		//hg
+		temp = (g - r)*(g - r) + (g - b)*(r - b);
+		if (temp <= 0)
+			hg = 0;
+		else
+			hg = (2 * g - r - b) / (2 * sqrt(temp));
 
-	float hmax = max(max(hr, hg),hb);
-	float k = s - sqrt(1 - hmax * hmax);
-	if (k < 0.2)//black
-		return 3;
-	else if (hmax == hr)
-		return 0;
-	else if (hmax == hg)
-		return 1;
-	else if (hmax == hb)
-		return 2;
-	else {
-		std::cout << " color detect failed " << std::endl;
-		return -1;
+		//hb
+		temp = (b - g)*(b - g) + (b - r)*(g - r);
+		if (temp <= 0)
+			hb = 0;
+		else
+			hb = (2 * b - g - r) / (2 * sqrt(temp));
+
+		float hmax = max(max(hr, hg), hb);
+		float k = s - sqrt(1 - hmax * hmax);
+		if (k < 0.02)//black
+			return 3;
+		else if (hmax == hr)
+			return 0;
+		else if (hmax == hg)
+			return 1;
+		else if (hmax == hb)
+			return 2;
+		else {
+			std::cout << " color detect failed " << std::endl;
+			return -1;
+		}
 	}
-	*/
 
 }

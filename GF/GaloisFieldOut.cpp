@@ -179,20 +179,59 @@ int main(int argc, char *argv[])
 
 	//Create code matrix;
 	cv::Mat_<cv::Vec4i> codeMat(62,64);
+	std::vector< cv::Vec4i> codeVec, codeVecDuo;
 	
-
-	for (int i = 0; i < codeMat.rows; ++i) {
-		for (int j = 0; j < codeMat.cols; ++j) {
+	for (int j = 0; j < codeMat.cols; ++j) {
+		for (int i = 0; i < codeMat.rows; ++i) {	
 			cv::Vec4i code;
 			code[0] = arr(i, j);
 			code[1] = arr(i, j + 1);
 			code[2] = arr(i + 1, j);
 			code[3] = arr(i + 1, j + 1);
 			codeMat(i, j) = code;
+			codeVec.push_back(code);
 		}
 	}
+	//duplicate the code vector
+	codeVecDuo.insert(codeVecDuo.end(), codeVec.begin(), codeVec.end());
+	codeVecDuo.insert(codeVecDuo.end(), codeVec.begin(), codeVec.end());
 	
+
+	//convert projector features and save to mat
+	std::vector<cv::Vec2d> projFeatsType1, projFeatsType2, projFeatsTypeAll;
+	//std::vector<KeyPoint> projKeyPointsType1, projKeyPointsType2;
 	
+	//type1
+	for (size_t i = 1; i <= codeMat.cols; i++) {
+		double x = (double)elmSize * i - 0.5;
+		for (size_t j = 1; j <= codeMat.rows; j++) {
+			double y = (double)elmSize * j - ((double)elmSize - 1) / 2.f - 1;
+			projFeatsType1.push_back(cv::Vec2d(x, y));
+			projFeatsTypeAll.push_back(cv::Vec2d(x, y));
+		}
+	}
+	std::cout << "converted " << projFeatsType1.size() << " type 1 projector features." << std::endl;
+	//type2
+	for (size_t i = 1; i <= codeMat.cols; i++) {
+		double x = (double)elmSize * i - ((double)elmSize- 1) / 2.f - 1;
+		for (size_t j = 1; j <= codeMat.rows; j++) {
+			double y = (double)elmSize * j - 0.5;
+			projFeatsType2.push_back(cv::Vec2d(x, y));
+			projFeatsTypeAll.push_back(cv::Vec2d(x, y));
+		}
+	}
+	std::cout << "converted " << projFeatsType2.size() << " type 2 projector features." << std::endl;
+	
+	cv::FileStorage projFeatsAllFs("ProjectorFeaturesAll.yml", cv::FileStorage::WRITE);
+	projFeatsAllFs << "features" << projFeatsTypeAll;
+	projFeatsAllFs << "codewords" << codeVecDuo;
+	projFeatsAllFs.release();
+
+	cv::FileStorage projFeatsFs("ProjectorFeatures.yml", cv::FileStorage::WRITE);
+	projFeatsFs << "type1" << projFeatsType1;
+	projFeatsFs << "type2" << projFeatsType2;
+	projFeatsFs.release();
+
 	cv::FileStorage file("CodeFile.xml", cv::FileStorage::WRITE);
 
 	// Write to file!
