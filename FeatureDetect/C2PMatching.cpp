@@ -68,7 +68,7 @@ void C2PMatching(const std::vector<ValidPoint> vpType1, const std::vector<ValidP
 
 	std::vector<DMatch> subDmatchesType1, subDmatchesType2;
 	
-	int subsample_step = 5;
+	int subsample_step = 3;
 	for (int i = 0; i < DmatchesType1.size(); i += subsample_step) {
 		subDmatchesType1.push_back(DmatchesType1[i]);
 	}
