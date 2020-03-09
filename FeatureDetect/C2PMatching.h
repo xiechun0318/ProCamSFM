@@ -5,7 +5,7 @@
 
 using namespace cv;
 
-inline std::vector<KeyPoint> Vec2d2KeyPoint(const std::vector<Vec2d> input, const int scale = 5) {
+inline std::vector<KeyPoint> Vec2d2KeyPoint(const std::vector<Vec2d> input, const float scale = 5) {
 	std::vector<KeyPoint> kpVec;
 	for (auto p = input.begin(); p != input.end(); ++p) {
 		kpVec.push_back(KeyPoint((float)((*p)[0]) * scale, (float)((*p)[1]) * scale, 1));

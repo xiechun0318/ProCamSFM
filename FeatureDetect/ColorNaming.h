@@ -10,6 +10,13 @@ enum ColorNamingSpace
 	LAB,
 	HSV_ALT
 };
+
+int decideColir(Mat color, ColorNamingSpace colorSpace = HSV) {
+	Scalar color_avg;
+	if (colorSpace == HSV) {
+
+	}
+}
 int decideColor(Scalar & color, ColorNamingSpace colorSpace = HSV) {
 
 	if (colorSpace == LAB) {
@@ -62,13 +69,16 @@ int decideColor(Scalar & color, ColorNamingSpace colorSpace = HSV) {
 			return 3;
 		}
 		else if (h < 60 || h >= 300) {//red
-			return 0;
+			//if (v < 0.5)  //black
+			//	return 3;
+			//else
+				return 0;
 		}
 		else if (h >= 60 && h < 180) {//green
 			return 1;
 		}
 		else if (h >= 180 && h < 300) {//blue
-			if (v < 0.8)  //black
+			if (v < 0.6)  //black
 				return 3;
 			else
 				return 2;
@@ -80,7 +90,7 @@ int decideColor(Scalar & color, ColorNamingSpace colorSpace = HSV) {
 	}
 	if (colorSpace == HSV_ALT) {
 
-		float b = color[0], g = color[1], r = color[2];
+		float b = color[0] / 255.f, g = color[1] / 255.f, r = color[2] / 255.f;
 
 		float s = sqrt(1 - (r*g + g * b + r * b) / (r*r + g * g + b * b));
 
@@ -88,27 +98,32 @@ int decideColor(Scalar & color, ColorNamingSpace colorSpace = HSV) {
 		float temp;
 		//hr
 		temp = (r - g)*(r - g) + (r - b)*(g - b);
-		if (temp <= 0)
-			hr = 0;
-		else
+		//if (temp <= 0)
+		//	hr = 0;
+		//else
 			hr = (2 * r - g - b) / (2 * sqrt(temp));
 
 		//hg
 		temp = (g - r)*(g - r) + (g - b)*(r - b);
-		if (temp <= 0)
-			hg = 0;
-		else
+		//if (temp <= 0)
+		//	hg = 0;
+		//else
 			hg = (2 * g - r - b) / (2 * sqrt(temp));
 
 		//hb
 		temp = (b - g)*(b - g) + (b - r)*(g - r);
-		if (temp <= 0)
-			hb = 0;
-		else
+		//if (temp <= 0)
+		//	hb = 0;
+		//else
 			hb = (2 * b - g - r) / (2 * sqrt(temp));
 
 		float hmax = max(max(hr, hg), hb);
-		float k = s - sqrt(1 - hmax * hmax);
+		if (hmax > 1)
+			hmax = 1;
+		float k;
+
+		k = s - sqrt(abs(1 - hmax * hmax));
+		
 		if (k < 0.02)//black
 			return 3;
 		else if (hmax == hr)

@@ -56,7 +56,7 @@ void C2PMatching(const std::vector<ValidPoint> vpType1, const std::vector<ValidP
 	std::vector<cv::Vec2d> projFeatsType1(projFeats.begin(), projFeats.begin() + (projFeats.size() / 2)),
 		projFeatsType2(projFeats.begin() + (projFeats.size() / 2), projFeats.end());
 
-	float zoomFactor = 5;
+	float zoomFactor = 1.5;
 	std::vector<KeyPoint> projKeyPointsType1 = Vec2d2KeyPoint(projFeatsType1, zoomFactor),
 		projKeyPointsType2 = Vec2d2KeyPoint(projFeatsType2, zoomFactor);
 
@@ -68,7 +68,7 @@ void C2PMatching(const std::vector<ValidPoint> vpType1, const std::vector<ValidP
 
 	std::vector<DMatch> subDmatchesType1, subDmatchesType2;
 	
-	int subsample_step = 3;
+	int subsample_step = 1;
 	for (int i = 0; i < DmatchesType1.size(); i += subsample_step) {
 		subDmatchesType1.push_back(DmatchesType1[i]);
 	}
